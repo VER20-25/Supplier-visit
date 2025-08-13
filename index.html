@@ -58,6 +58,12 @@
         <label for="member">Team Member Name:</label>
         <input type="text" id="member" name="member" required>
 
+        <label for="budget">Budget (INR):</label>
+        <input type="number" id="budget" name="budget" required>
+
+        <label for="usd">Converted Budget (USD):</label>
+        <input type="text" id="usd" name="usd" readonly>
+
         <label for="notes">Notes:</label>
         <textarea id="notes" name="notes" rows="4"></textarea>
 
@@ -66,6 +72,28 @@
     <div class="message" id="message"></div>
 
     <script>
+        async function convertINRtoUSD(inrAmount) {
+            try {
+                const res = await fetch('https://api.exchangerate-api.com/v4/latest/INR');
+                const data = await res.json();
+                const rate = data.rates.USD;
+                return (inrAmount * rate).toFixed(2);
+            } catch (error) {
+                console.error('Conversion error:', error);
+                return 'Conversion failed';
+            }
+        }
+
+        document.getElementById('budget').addEventListener('input', async function () {
+            const inr = parseFloat(this.value);
+            if (!isNaN(inr)) {
+                const usd = await convertINRtoUSD(inr);
+                document.getElementById('usd').value = usd;
+            } else {
+                document.getElementById('usd').value = '';
+            }
+        });
+
         document.getElementById('visitForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -73,15 +101,17 @@
             const date = document.getElementById('date').value;
             const purpose = document.getElementById('purpose').value;
             const member = document.getElementById('member').value;
+            const budgetINR = document.getElementById('budget').value;
+            const budgetUSD = document.getElementById('usd').value;
             const notes = document.getElementById('notes').value;
 
             const issueTitle = `Supplier Visit: ${supplier} on ${date}`;
-            const issueBody = `**Supplier:** ${supplier}\n**Date:** ${date}\n**Purpose:** ${purpose}\n**Team Member:** ${member}\n**Notes:** ${notes}`;
+            const issueBody = `**Supplier:** ${supplier}\n**Date:** ${date}\n**Purpose:** ${purpose}\n**Team Member:** ${member}\n**Budget:** ₹${budgetINR} (~\$${budgetUSD})\n**Notes:** ${notes}`;
 
             const response = await fetch('https://api.github.com/repos/YOUR_USERNAME/YOUR_REPO/issues', {
                 method: 'POST',
                 headers: {
-                    'Authorization': 'token YOUR_PERSONAL_ACCESS_TOKEN', // Replace with your GitHub PAT
+                    'Authorization': 'token YOUR_PERSONAL_ACCESS_TOKEN',
                     'Accept': 'application/vnd.github.v3+json'
                 },
                 body: JSON.stringify({
@@ -95,6 +125,7 @@
                 messageDiv.textContent = 'Visit logged successfully!';
                 messageDiv.style.color = 'green';
                 document.getElementById('visitForm').reset();
+                document.getElementById('usd').value = '';
             } else {
                 const errorData = await response.json();
                 messageDiv.textContent = 'Error: ' + (errorData.message || 'Unable to create issue');
