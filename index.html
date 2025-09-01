@@ -40,10 +40,17 @@
         .message {
             margin-top: 20px;
         }
+        .logo {
+            display: block;
+            margin: 0 auto 20px auto;
+            max-width: 300px;
+        }
     </style>
 </head>
 <body>
-    <h1>Supplier Visit Log</h1>
+
+    <!-- GE Vernova Logo Header -->
+    <img src="https://www.gevernova.com/themes/custom/gevernova/logo.svg" alt="GE Vernova Logo"
     <form id="visitForm" onsubmit="sendEmail(); return false;">
         <label for="supplier">Supplier Name:</label>
         <input type="text" id="supplier" name="supplier" required>
@@ -68,6 +75,7 @@
 
         <button type="submit">Submit</button>
     </form>
+
     <div class="message" id="message"></div>
 
     <script>
@@ -107,9 +115,10 @@
                 `Supplier Name: ${supplier}\nDate of Visit: ${date}\nPurpose: ${purpose}\nTeam Member: ${member}\nBudget (INR): ₹${budgetINR}\nConverted Budget (USD): $${budgetUSD}\nNotes: ${notes}`
             );
 
-            const mailtoLink = `mailto:gayatri.voolapalli@gevernova.com?subject=${subject}&body=${body}`;
+            const mailtoLink = `mailto:Joydeep.Pal@gevernova.com?subject=${subject}&body=${body}`;
             window.location.href = mailtoLink;
         }
     </script>
+
 </body>
 </html>
