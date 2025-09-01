@@ -44,7 +44,7 @@
 </head>
 <body>
     <h1>Supplier Visit Log</h1>
-    <form id="visitForm">
+    <form id="visitForm" onsubmit="sendEmail(); return false;">
         <label for="supplier">Supplier Name:</label>
         <input type="text" id="supplier" name="supplier" required>
 
@@ -93,9 +93,7 @@
             }
         });
 
-        document.getElementById('visitForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-
+        function sendEmail() {
             const supplier = document.getElementById('supplier').value;
             const date = document.getElementById('date').value;
             const purpose = document.getElementById('purpose').value;
@@ -104,33 +102,14 @@
             const budgetUSD = document.getElementById('usd').value;
             const notes = document.getElementById('notes').value;
 
-            const issueTitle = `Supplier Visit: ${supplier} on ${date}`;
-            const issueBody = `**Supplier:** ${supplier}\n**Date:** ${date}\n**Purpose:** ${purpose}\n**Team Member:** ${member}\n**Budget:** ₹${budgetINR} (~\$${budgetUSD})\n**Notes:** ${notes}`;
+            const subject = encodeURIComponent(`Supplier Visit: ${supplier} on ${date}`);
+            const body = encodeURIComponent(
+                `Supplier Name: ${supplier}\nDate of Visit: ${date}\nPurpose: ${purpose}\nTeam Member: ${member}\nBudget (INR): ₹${budgetINR}\nConverted Budget (USD): $${budgetUSD}\nNotes: ${notes}`
+            );
 
-            const response = await fetch('https://api.github.com/repos/YOUR_USERNAME/YOUR_REPO/issues', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'token YOUR_PERSONAL_ACCESS_TOKEN',
-                    'Accept': 'application/vnd.github.v3+json'
-                },
-                body: JSON.stringify({
-                    title: issueTitle,
-                    body: issueBody
-                })
-            });
-
-            const messageDiv = document.getElementById('message');
-            if (response.ok) {
-                messageDiv.textContent = 'Visit logged successfully!';
-                messageDiv.style.color = 'green';
-                document.getElementById('visitForm').reset();
-                document.getElementById('usd').value = '';
-            } else {
-                const errorData = await response.json();
-                messageDiv.textContent = 'Error: ' + (errorData.message || 'Unable to create issue');
-                messageDiv.style.color = 'red';
-            }
-        });
+            const mailtoLink = `mailto:gayatri.voolapalli@gevernova.com?subject=${subject}&body=${body}`;
+            window.location.href = mailtoLink;
+        }
     </script>
 </body>
 </html>
