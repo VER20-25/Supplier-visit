@@ -62,8 +62,7 @@
 <body>
 
     <div class="container">
-        <img src="https://www.gevernova.com/themes/custom/ge_vernova_unified/logo.svg"
-        <!-- GE Vernova Logo Header -->
+        https://www.gevernova.com/themes/custom/ge_vernova_unified/logo.svg
 
         <h1>Supplier Visit Log</h1>
 
@@ -128,8 +127,24 @@
             const notes = document.getElementById('notes').value;
 
             const subject = encodeURIComponent(`Supplier Visit: ${supplier} on ${date}`);
+
             const body = encodeURIComponent(
-                `Supplier Name: ${supplier}\nDate of Visit: ${date}\nPurpose: ${purpose}\nTeam Member: ${member}\nBudget (INR): ₹${budgetINR}\nConverted Budget (USD): $${budgetUSD}\nNotes: ${notes}`
+`Hi Joydeep,
+
+Here are the details of the supplier visit:
+
+----------------------------------------
+Supplier Name       : ${supplier}
+Date of Visit       : ${date}
+Purpose of Visit    : ${purpose}
+Team Member         : ${member}
+Budget (INR)        : ₹${budgetINR}
+Converted Budget    : $${budgetUSD}
+Notes               : ${notes}
+----------------------------------------
+
+Regards,  
+${member}`
             );
 
             const mailtoLink = `mailto:Joydeep.Pal@gevernova.com?subject=${subject}&body=${body}`;
